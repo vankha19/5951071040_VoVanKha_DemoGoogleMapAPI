@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Google Map API</title>
+    <style type="text/css">
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+        #floating-panel {
+            position: absolute;
+            top: 10px;
+            left: 25%;
+            z-index: 5;
+            background-color: #fff;
+            padding: 5px;
+            border: 1px solid #999;
+            text-align: center;
+            font-family: "Roboto", "sans-serif";
+            line-height: 30px;
+            padding-left: 10px;
+        }
+    </style>
+    <script>
+        function initMap() {
+            const UTC2 = { lat: 10.845952087205108, lng: 106.7945085316454 };
+            const myHome = {lat:10.843711438774685, lng:106.79519339577138};
+
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 15,
+                center: UTC2,
+                // zoomControl : false,
+                // streetViewControl: false,
+                // fullsSceenControl: false,
+                // mapTypeControl: false,
+                // scaleControl : true,
+
+            });
+            const markerUTC2 = new google.maps.Marker({
+            position: UTC2,
+            map: map,
+            label: "UTC2",
+            icon : "utc2.png",
+            title : "ĐẠI HỌC GTVT PHÂN HIỆU TẠI THÀNH PHỐ HỒ CHÍ MINH",
+
+             });
+            const markerMyHome = new google.maps.Marker({
+            position: myHome,
+            map: map,
+            label: "KTX",
+            title : "KTX UTC2"
+             });
+
+
+            const infoUTC2 = "Trường Đại Học GTVT Phân hiệu TP.HCM<br>Địa chỉ:450 Lê Văn Việt, TNPA, Quận 9(TP.Thủ Đức),TP.HCM";
+            const myInfo = "Võ Văn Kha<br>MSV:5951071040<br>Ngày sinh: 19/10/2000 (21 tuổi)<br>Quê quán: Quảng Ngãi<Email>:vankha2000@gmail.com";
+
+            const infoWindowUTC2 = new google.maps.InfoWindow({
+                content: infoUTC2,});
+            const infoWindowK = new google.maps.InfoWindow({
+                content: myInfo,});
+
+            markerUTC2.addListener("click",() => {
+                infoWindowUTC2.open(map,markerUTC2);
+                });
+            markerMyHome.addListener("click",() => {
+                infoWindowK.open(map,markerMyHome);
+                });
+            // Direction
+            const directionsService = new google.maps.DirectionsService();
+            const directionsRenderer = new google.maps.DirectionsRenderer();
+            
+            directionsRenderer.setMap(map);
+
+            const onChangeHandler = function () {
+                calculateAndDisplayRoute(directionsService, directionsRenderer);
+            };
+            document.getElementById("start").addEventListener("change", onChangeHandler);
+            document.getElementById("end").addEventListener("change", onChangeHandler);}
+        function calculateAndDisplayRoute(directionsService, directionsRenderer) {
+            directionsService.route(
+                {
+                    origin: {
+                        query: document.getElementById("start").value,
+                    },
+                    destination: {
+                        query: document.getElementById("end").value,
+                    },
+                    travelMode: google.maps.TravelMode.DRIVING,
+                },
+                (response, status) => {
+                    if (status === "OK") {
+                        directionsRenderer.setDirections(response);
+                    } else {window.alert("Directions request failed due to " + status);}});
+            
+
+
+
+        }
+        
+    </script>
+</head>
+<body>
+    <h3>Đặt bản đồ tại đây</h3>
+    <div id="floating-panel">
+        <b>Start: </b>
+        <select id="start">
+            
+            <option value="ĐẠI HỌC GTVT PHÂN HIỆU TẠI THÀNH PHỐ HỒ CHÍ MINH">UTC2</option>
+            <option value="KÍ TÚC XÁ ĐẠI HỌC GIAO THÔNG VẬN TẢI PHÂN HIỆU TẠI TP.HCM">My Home</option>
+        </select>
+        <b>End: </b>
+        <select id="end">
+            
+            <option value="KÍ TÚC XÁ ĐẠI HỌC GIAO THÔNG VẬN TẢI PHÂN HIỆU TẠI TP.HCM">My Home</option>
+            <option value="ĐẠI HỌC GTVT PHÂN HIỆU TẠI THÀNH PHỐ HỒ CHÍ MINH">UTC2</option>
+        </select>
+    </div>
+    <div id="map"></div>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBIwzALxUPNbatRBj3Xi1Uhp0fFzwWNBkE&callback=initMap&libraries=drawing&v=weekly"
+        async></script>
+</body>
+</html>
